@@ -9,52 +9,69 @@ public class FIFOPageReplacementLab {
      * Returns an array: [pageFaults, pageHits]
      *
      * Algorithm:
-     *   1. Create a Queue<Integer> to represent frames in memory (use LinkedList)
-     *   2. Create a Set<Integer> to quickly check if a page is in memory (use HashSet)
-     *   3. Initialize pageFaults = 0 and pageHits = 0
-     *   4. For each page in the referenceString:
-     *      a. If page is in the Set (memory):
-     *         - Increment pageHits
-     *      b. If page is NOT in the Set:
-     *         - Increment pageFaults
-     *         - If queue size equals numFrames (frames are full):
-     *           * Remove the oldest page: int victim = queue.poll()
-     *           * Remove victim from the Set
-     *         - Add the new page to the queue
-     *         - Add the new page to the Set
-     *   5. Return new int[]{pageFaults, pageHits}
+     * 1. Create a Queue<Integer> to represent frames in memory (use LinkedList)
+     * 2. Create a Set<Integer> to quickly check if a page is in memory (use HashSet)
+     * 3. Initialize pageFaults = 0 and pageHits = 0
+     * 4. For each page in the referenceString:
+     * a. If page is in the Set (memory):
+     * - Increment pageHits
+     * b. If page is NOT in the Set:
+     * - Increment pageFaults
+     * - If queue size equals numFrames (frames are full):
+     * * Remove the oldest page: int victim = queue.poll()
+     * * Remove victim from the Set
+     * - Add the new page to the queue
+     * - Add the new page to the Set
+     * 5. Return new int[]{pageFaults, pageHits}
      *
      * Example:
-     *   referenceString = [1, 2, 3, 1]
-     *   numFrames = 2
+     * referenceString = [1, 2, 3, 1]
+     * numFrames = 2
      *
-     *   Access 1: queue=[1], set={1}, FAULT
-     *   Access 2: queue=[1,2], set={1,2}, FAULT
-     *   Access 3: queue=[2,3], set={2,3}, FAULT (removed 1)
-     *   Access 1: queue=[3,1], set={3,1}, FAULT (removed 2)
+     * Access 1: queue=[1], set={1}, FAULT
+     * Access 2: queue=[1,2], set={1,2}, FAULT
+     * Access 3: queue=[2,3], set={2,3}, FAULT (removed 1)
+     * Access 1: queue=[3,1], set={3,1}, FAULT (removed 2)
      *
-     *   Result: [4 faults, 0 hits]
+     * Result: [4 faults, 0 hits]
      */
     public static int[] simulateFIFO(int[] referenceString, int numFrames) {
         int pageFaults = 0;
         int pageHits = 0;
 
         // TODO 1: Implement FIFO algorithm here
-        // Queue<Integer> queue = new LinkedList<>();
-        // Set<Integer> pagesInMemory = new HashSet<>();
+        // 1. Create a Queue to represent frames
+        Queue<Integer> queue = new LinkedList<>();
+        // 2. Create a Set to quickly check if a page is in memory
+        Set<Integer> pagesInMemory = new HashSet<>();
 
-        // for (int page : referenceString) {
-        //     if (pagesInMemory.contains(page)) {
-        //         // Page HIT
-        //     } else {
-        //         // Page FAULT
-        //         if (queue.size() == numFrames) {
-        //             // Remove oldest page
-        //         }
-        //         // Add new page
-        //     }
-        // }
+        // 4. For each page in the referenceString
+        for (int page : referenceString) {
+            // 4a. If page is in the Set (memory):
+            if (pagesInMemory.contains(page)) {
+                // - Increment pageHits
+                pageHits++;
+            } else {
+                // 4b. If page is NOT in the Set:
+                // - Increment pageFaults
+                pageFaults++;
+                
+                // - If queue size equals numFrames (frames are full):
+                if (queue.size() == numFrames) {
+                    // * Remove the oldest page: int victim = queue.poll()
+                    int victim = queue.poll();
+                    // * Remove victim from the Set
+                    pagesInMemory.remove(victim);
+                }
+                
+                // - Add the new page to the queue
+                queue.offer(page);
+                // - Add the new page to the Set
+                pagesInMemory.add(page);
+            }
+        }
 
+        // 5. Return new int[]{pageFaults, pageHits}
         return new int[]{pageFaults, pageHits};
     }
 
